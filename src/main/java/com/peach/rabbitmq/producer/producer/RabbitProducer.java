@@ -1,4 +1,4 @@
-package com.peach.rabbitmq.producer;
+package com.peach.rabbitmq.producer.producer;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
