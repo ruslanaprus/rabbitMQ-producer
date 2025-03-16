@@ -1,21 +1,27 @@
 package com.peach.rabbitmq.producer;
 
 import com.peach.rabbitmq.producer.entity.Employee;
+import com.peach.rabbitmq.producer.entity.Picture;
 import com.peach.rabbitmq.producer.producer.HumanResourceProducer;
+import com.peach.rabbitmq.producer.producer.PictureProducer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 //@EnableScheduling
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	private final HumanResourceProducer producer;
+	private final PictureProducer producer;
+	private final List<String> SOURCES = List.of("mobile", "email", "web");
+	private final List<String> TYPES = List.of("jpg", "png", "svg");
 
-	public Application(HumanResourceProducer producer) {
+	public Application(PictureProducer producer) {
 		this.producer = producer;
 	}
 
@@ -25,13 +31,14 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for (int i = 0; i < 5; i++) {
-			var employee = Employee.builder()
-					.id("emp-" + i)
-					.name("Employee " + i)
-					.birthday(LocalDate.now().minusYears(i))
+		for (int i = 0; i < 10; i++) {
+			var picture = Picture.builder()
+					.name("pic-" + i)
+					.source(SOURCES.get(i % SOURCES.size()))
+					.type(TYPES.get(i % TYPES.size()))
+					.size(ThreadLocalRandom.current().nextLong(1, 10000))
 					.build();
-			producer.sendJsonMessage(employee);
+			producer.sendJsonMessage(picture);
 		}
 	}
 }
