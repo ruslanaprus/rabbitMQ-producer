@@ -1,15 +1,12 @@
 package com.peach.rabbitmq.producer;
 
-import com.peach.rabbitmq.producer.entity.Employee;
 import com.peach.rabbitmq.producer.entity.Picture;
-import com.peach.rabbitmq.producer.producer.HumanResourceProducer;
-import com.peach.rabbitmq.producer.producer.PictureProducer;
+import com.peach.rabbitmq.producer.producer.PictureProducerTopic;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,11 +14,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	private final PictureProducer producer;
+	private final PictureProducerTopic producer;
 	private final List<String> SOURCES = List.of("mobile", "email", "web");
 	private final List<String> TYPES = List.of("jpg", "png", "svg");
 
-	public Application(PictureProducer producer) {
+	public Application(PictureProducerTopic producer) {
 		this.producer = producer;
 	}
 
