@@ -1,25 +1,21 @@
 package com.peach.rabbitmq.producer;
 
-import com.peach.rabbitmq.producer.entity.Picture;
-import com.peach.rabbitmq.producer.producer.MyPictureProducer;
-import com.peach.rabbitmq.producer.producer.PictureProducerTopic;
+import com.peach.rabbitmq.producer.entity.Furniture;
+import com.peach.rabbitmq.producer.producer.FurnitureProducer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
-//@EnableScheduling
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	private final MyPictureProducer producer;
-	private final List<String> SOURCES = List.of("mobile", "email", "web");
-	private final List<String> TYPES = List.of("jpg", "png", "svg");
+	private final FurnitureProducer producer;
+	private final List<String> COLOURS = List.of("white", "red", "green");
+	private final List<String> MATERIALS = List.of("wood", "plastic", "steel");
 
-	public Application(MyPictureProducer producer) {
+	public Application(FurnitureProducer producer) {
 		this.producer = producer;
 	}
 
@@ -29,14 +25,14 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for (int i = 0; i < 1; i++) {
-			var picture = Picture.builder()
-					.name("pic-" + i)
-					.source(SOURCES.get(i % SOURCES.size()))
-					.type(TYPES.get(i % TYPES.size()))
-					.size(ThreadLocalRandom.current().nextLong(9001, 10000))
+		for (int i = 0; i < 10; i++) {
+			var furniture = Furniture.builder()
+					.name("furniture " + i)
+					.colour(COLOURS.get(i % COLOURS.size()))
+					.material(MATERIALS.get(i % MATERIALS.size()))
+					.price(i)
 					.build();
-			producer.sendJsonMessage(picture);
+			producer.sendMessage(furniture);
 		}
 	}
 }
