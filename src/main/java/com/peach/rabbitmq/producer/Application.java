@@ -1,6 +1,7 @@
 package com.peach.rabbitmq.producer;
 
 import com.peach.rabbitmq.producer.entity.Picture;
+import com.peach.rabbitmq.producer.producer.MyPictureProducer;
 import com.peach.rabbitmq.producer.producer.PictureProducerTopic;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,11 +15,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-	private final PictureProducerTopic producer;
+	private final MyPictureProducer producer;
 	private final List<String> SOURCES = List.of("mobile", "email", "web");
 	private final List<String> TYPES = List.of("jpg", "png", "svg");
 
-	public Application(PictureProducerTopic producer) {
+	public Application(MyPictureProducer producer) {
 		this.producer = producer;
 	}
 
@@ -28,12 +29,12 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 1; i++) {
 			var picture = Picture.builder()
 					.name("pic-" + i)
 					.source(SOURCES.get(i % SOURCES.size()))
 					.type(TYPES.get(i % TYPES.size()))
-					.size(ThreadLocalRandom.current().nextLong(1, 10000))
+					.size(ThreadLocalRandom.current().nextLong(9001, 10000))
 					.build();
 			producer.sendJsonMessage(picture);
 		}
