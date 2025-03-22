@@ -153,6 +153,31 @@
         </form>
         <div id="furnitureResponse" class="response"></div>
     </div>
+    
+    <div class="section">
+        <h2>Furniture Topic Message</h2>
+        <p>Uses a topic exchange with routing keys in the format: <code>colour.material.price-category</code></p>
+        <form id="furnitureTopicForm">
+            <div>
+                <label for="furnitureTopicName">Name:</label>
+                <input type="text" id="furnitureTopicName" required>
+            </div>
+            <div>
+                <label for="furnitureTopicColour">Colour:</label>
+                <input type="text" id="furnitureTopicColour" required placeholder="e.g. red, white, green">
+            </div>
+            <div>
+                <label for="furnitureTopicMaterial">Material:</label>
+                <input type="text" id="furnitureTopicMaterial" required placeholder="e.g. wood, plastic, steel">
+            </div>
+            <div>
+                <label for="furnitureTopicPrice">Price:</label>
+                <input type="number" id="furnitureTopicPrice" required min="0" placeholder="≥100 will route to 'expensive'">
+            </div>
+            <button type="submit">Send via Topic Exchange</button>
+        </form>
+        <div id="furnitureTopicResponse" class="response"></div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -274,6 +299,39 @@
                 })
                 .catch(error => {
                     const responseElement = document.getElementById('furnitureResponse');
+                    responseElement.textContent = `Error: ${error.message}`;
+                    responseElement.style.display = 'block';
+                    responseElement.classList.add('error');
+                });
+            });
+
+            // Furniture topic form handler
+            document.getElementById('furnitureTopicForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const furnitureTopic = {
+                    name: document.getElementById('furnitureTopicName').value,
+                    colour: document.getElementById('furnitureTopicColour').value,
+                    material: document.getElementById('furnitureTopicMaterial').value,
+                    price: parseInt(document.getElementById('furnitureTopicPrice').value)
+                };
+                
+                fetch(`${apiUrl}/furniture/topic`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(furnitureTopic)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const responseElement = document.getElementById('furnitureTopicResponse');
+                    responseElement.textContent = `Response: ${JSON.stringify(data)}`;
+                    responseElement.style.display = 'block';
+                    responseElement.classList.remove('error');
+                })
+                .catch(error => {
+                    const responseElement = document.getElementById('furnitureTopicResponse');
                     responseElement.textContent = `Error: ${error.message}`;
                     responseElement.style.display = 'block';
                     responseElement.classList.add('error');

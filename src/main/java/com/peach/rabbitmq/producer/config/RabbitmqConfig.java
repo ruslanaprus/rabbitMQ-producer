@@ -62,6 +62,11 @@ public class RabbitmqConfig {
         return new DirectExchange("x.hr");
     }
     
+    @Bean 
+    public TopicExchange furnitureTopicExchange() {
+        return new TopicExchange("x.furniture.topic");
+    }
+    
     @Bean
     public DirectExchange promotionExchange() {
         return new DirectExchange("x.promotion");
@@ -81,6 +86,32 @@ public class RabbitmqConfig {
     @Bean
     public Queue guidelineQueue() {
         return new Queue("q.guideline");
+    }
+    
+    // Furniture queues
+    @Bean
+    public Queue furnitureWoodQueue() {
+        return new Queue("q.furniture.wood");
+    }
+    
+    @Bean
+    public Queue furniturePlasticQueue() {
+        return new Queue("q.furniture.plastic");
+    }
+    
+    @Bean
+    public Queue furnitureSteelQueue() {
+        return new Queue("q.furniture.steel");
+    }
+    
+    @Bean
+    public Queue furnitureExpensiveQueue() {
+        return new Queue("q.furniture.expensive");
+    }
+    
+    @Bean
+    public Queue furniturePromotionQueue() {
+        return new Queue("q.furniture.promotion");
     }
     
     // Simple queues for other producers
@@ -133,5 +164,41 @@ public class RabbitmqConfig {
         return BindingBuilder.bind(guidelineQueue)
                 .to(guidelineExchange)
                 .with("svg");
+    }
+    
+    // Furniture bindings for topic exchange
+    @Bean
+    public Binding furnitureWoodBinding(Queue furnitureWoodQueue, TopicExchange furnitureTopicExchange) {
+        return BindingBuilder.bind(furnitureWoodQueue)
+                .to(furnitureTopicExchange)
+                .with("*.wood.*");
+    }
+    
+    @Bean
+    public Binding furniturePlasticBinding(Queue furniturePlasticQueue, TopicExchange furnitureTopicExchange) {
+        return BindingBuilder.bind(furniturePlasticQueue)
+                .to(furnitureTopicExchange)
+                .with("*.plastic.*");
+    }
+    
+    @Bean
+    public Binding furnitureSteelBinding(Queue furnitureSteelQueue, TopicExchange furnitureTopicExchange) {
+        return BindingBuilder.bind(furnitureSteelQueue)
+                .to(furnitureTopicExchange)
+                .with("*.steel.*");
+    }
+    
+    @Bean
+    public Binding furnitureExpensiveBinding(Queue furnitureExpensiveQueue, TopicExchange furnitureTopicExchange) {
+        return BindingBuilder.bind(furnitureExpensiveQueue)
+                .to(furnitureTopicExchange)
+                .with("#.expensive");
+    }
+    
+    @Bean
+    public Binding furniturePromotionBinding(Queue furniturePromotionQueue, DirectExchange promotionExchange) {
+        return BindingBuilder.bind(furniturePromotionQueue)
+                .to(promotionExchange)
+                .with("");
     }
 }

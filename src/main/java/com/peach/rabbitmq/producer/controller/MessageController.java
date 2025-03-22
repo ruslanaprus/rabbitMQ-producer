@@ -5,6 +5,7 @@ import com.peach.rabbitmq.producer.entity.Furniture;
 import com.peach.rabbitmq.producer.entity.Picture;
 import com.peach.rabbitmq.producer.producer.EmployeeJsonProducer;
 import com.peach.rabbitmq.producer.producer.FurnitureProducer;
+import com.peach.rabbitmq.producer.producer.FurnitureTopicProducer;
 import com.peach.rabbitmq.producer.producer.PictureProducer;
 import com.peach.rabbitmq.producer.producer.RabbitProducer;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +24,20 @@ public class MessageController {
     private final PictureProducer pictureProducer;
     private final EmployeeJsonProducer employeeJsonProducer;
     private final FurnitureProducer furnitureProducer;
+    private final FurnitureTopicProducer furnitureTopicProducer;
 
     public MessageController(
             RabbitProducer rabbitProducer,
             PictureProducer pictureProducer,
             EmployeeJsonProducer employeeJsonProducer,
-            FurnitureProducer furnitureProducer
+            FurnitureProducer furnitureProducer,
+            FurnitureTopicProducer furnitureTopicProducer
     ) {
         this.rabbitProducer = rabbitProducer;
         this.pictureProducer = pictureProducer;
         this.employeeJsonProducer = employeeJsonProducer;
         this.furnitureProducer = furnitureProducer;
+        this.furnitureTopicProducer = furnitureTopicProducer;
     }
 
     @PostMapping("/hello")
@@ -69,6 +73,18 @@ public class MessageController {
         Map<String, String> response = new HashMap<>();
         response.put("status", "Furniture message sent");
         response.put("furnitureName", furniture.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/furniture/topic")
+    public ResponseEntity<Map<String, String>> sendFurnitureTopic(@RequestBody Furniture furniture) {
+        furnitureTopicProducer.sendJsonMessage(furniture);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Furniture topic message sent");
+        response.put("furnitureName", furniture.getName());
+        response.put("routingKey", furniture.getColour().toLowerCase() + "." + 
+                                  furniture.getMaterial().toLowerCase() + "." + 
+                                  (furniture.getPrice() >= 100 ? "expensive" : "budget"));
         return ResponseEntity.ok(response);
     }
 }
