@@ -11,6 +11,9 @@
             margin: 0 auto;
             padding: 20px;
             background: #f0f2f5;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         .card {
             background: white;
@@ -34,6 +37,10 @@
             border: 1px solid #d1d5db;
             border-radius: 6px;
             margin-bottom: 12px;
+            padding-right: 35px;  /* Space for the cat emoji */
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><text x="0" y="20" font-size="20">🐱</text></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
         }
         button {
             background: #7c3aed;
@@ -56,9 +63,69 @@
         }
         .success { background: #ecfdf5; color: #065f46; }
         .error { background: #fef2f2; color: #991b1b; }
+        
+        .corner-cat {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 1000;
+        }
+        
+        #top-left-cat {
+            top: 20px;
+            left: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        #top-right-cat {
+            top: 20px;
+            right: 20px;
+            animation: spin 3s linear infinite;
+        }
+        
+        #bottom-left-cat {
+            bottom: 20px;
+            left: 20px;
+            animation: dance 2.5s infinite;
+        }
+        
+        #bottom-right-cat {
+            bottom: 20px;
+            right: 20px;
+            animation: wobble 2s infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes dance {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(10deg); }
+            75% { transform: scale(1.1) rotate(-10deg); }
+        }
+        
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        .cat-input-wrapper {
+            position: relative;
+        }
     </style>
 </head>
 <body>
+    <div class="corner-cat" id="top-left-cat">🐱</div>
+    <div class="corner-cat" id="top-right-cat">🐱</div>
+    <div class="corner-cat" id="bottom-left-cat">🐱</div>
+    <div class="corner-cat" id="bottom-right-cat">🐱</div>
+
     <h1>🐰 🐱 RabbitMQ Message Sender</h1>
 
     <div class="card">
