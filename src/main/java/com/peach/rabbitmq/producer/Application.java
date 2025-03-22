@@ -5,11 +5,13 @@ import com.peach.rabbitmq.producer.producer.RetryPictureProducer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootApplication
+@EnableScheduling
 public class Application implements CommandLineRunner {
 
 	private final RetryPictureProducer producer;

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐰 🐱 RabbitMQ Sender</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f2f5;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { 
+            color: #7c3aed;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 8px 0;
+            color: #374151;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            padding-right: 35px;  /* Space for the cat emoji */
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><text x="0" y="20" font-size="20">🐱</text></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            box-sizing: border-box; /* Add this line to fix overflow */
+        }
+        button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #6d28d9;
+        }
+        .response {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        .success { background: #ecfdf5; color: #065f46; }
+        .error { background: #fef2f2; color: #991b1b; }
+        
+        .corner-cat {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 1000;
+        }
+        
+        #top-left-cat {
+            top: 20px;
+            left: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        #top-right-cat {
+            top: 20px;
+            right: 20px;
+            animation: spin 3s linear infinite;
+        }
+        
+        #bottom-left-cat {
+            bottom: 20px;
+            left: 20px;
+            animation: dance 2.5s infinite;
+        }
+        
+        #bottom-right-cat {
+            bottom: 20px;
+            right: 20px;
+            animation: wobble 2s infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes dance {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(10deg); }
+            75% { transform: scale(1.1) rotate(-10deg); }
+        }
+        
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        .cat-input-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="corner-cat" id="top-left-cat">🐱</div>
+    <div class="corner-cat" id="top-right-cat">🐱</div>
+    <div class="corner-cat" id="bottom-left-cat">🐱</div>
+    <div class="corner-cat" id="bottom-right-cat">🐱</div>
+
+    <h1>🐰 🐱 RabbitMQ Message Sender</h1>
+
+    <div class="card">
+        <h2>Send Message 🐱</h2>
+        <form id="messageForm">
+            <input type="hidden" id="messageType" name="messageType">
+            
+            <label for="messageCategory">Message Type 🐱:</label>
+            <select id="messageCategory" required>
+                <option value="">-- Select Type 🐱 --</option>
+                <option value="hello">Hello Message 🐱</option>
+                <option value="picture">Picture 🐱</option>
+                <option value="employee">Employee 🐱</option>
+                <option value="furniture">Furniture 🐱</option>
+            </select>
+
+            <!-- Dynamic Fields -->
+            <div id="dynamicFields"></div>
+
+            <button type="submit">Send Message 🚀 🐱</button>
+        </form>
+        <div id="responseArea" class="response"></div>
+    </div>
+
+    <script>
+        const formConfigs = {
+            hello: [
+                { name: 'name', type: 'text', label: 'Name', required: true }
+            ],
+            picture: [
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'type', type: 'select', label: 'Type', options: ['jpg', 'png', 'svg'], required: true },
+                { name: 'source', type: 'select', label: 'Source', options: ['mobile', 'web'], required: true },
+                { name: 'size', type: 'number', label: 'Size (bytes)', required: true, min: 1 }
+            ],
+            employee: [
+                { name: 'id', type: 'text', label: 'ID', required: true },
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'birthday', type: 'date', label: 'Birthday', required: true }
+            ],
+            furniture: [
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'colour', type: 'select', label: 'Color', 
+                    options: ['red', 'blue', 'green', 'yellow', 'white', 'black', 'brown', 'silver'], required: true },
+                { name: 'material', type: 'select', label: 'Material', 
+                    options: ['wood', 'plastic', 'steel'], required: true },
+                { name: 'price', type: 'number', label: 'Price', required: true, min: 0 }
+            ]
+        };
+
+        const messageForm = document.getElementById('messageForm');
+        const categorySelect = document.getElementById('messageCategory');
+        const dynamicFields = document.getElementById('dynamicFields');
+        const responseArea = document.getElementById('responseArea');
+
+        // Clear response area when message type changes
+        categorySelect.addEventListener('change', function() {
+            // Clear the response area
+            responseArea.style.display = 'none';
+            responseArea.textContent = '';
+            responseArea.className = 'response';
+
+            dynamicFields.innerHTML = '';
+            const fields = formConfigs[this.value] || [];
+            fields.forEach(field => {
+                const wrapper = document.createElement('div');
+                if (field.type === 'select') {
+                    wrapper.innerHTML = `
+                        <label for="${field.name}">${field.label} 🐱:</label>
+                        <select id="${field.name}" name="${field.name}" ${field.required ? 'required' : ''}>
+                            ${field.options.map(opt => `<option value="${opt}">${opt} 🐱</option>`).join('')}
+                        </select>
+                    `;
+                } else {
+                    wrapper.innerHTML = `
+                        <label for="${field.name}">${field.label} 🐱:</label>
+                        <input type="${field.type}" id="${field.name}" name="${field.name}"
+                            ${field.required ? 'required' : ''} ${field.min ? `min="${field.min}"` : ''}>
+                    `;
+                }
+                dynamicFields.appendChild(wrapper);
+            });
+        });
+
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const type = categorySelect.value;
+            if (!type) return;
+
+            const formData = {};
+            formConfigs[type].forEach(field => {
+                const element = document.getElementById(field.name);
+                formData[field.name] = element.type === 'number' ? Number(element.value) : element.value;
+            });
+
+            try {
+                let url = '/api/messages/';
+                switch(type) {
+                    case 'hello': url += `hello?name=${encodeURIComponent(formData.name)}`; break;
+                    case 'picture': url += 'picture'; break;
+                    case 'employee': url += 'employee'; break;
+                    case 'furniture': url += 'furniture/topic'; break;
+                }
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: type !== 'hello' ? {'Content-Type': 'application/json'} : {},
+                    body: type !== 'hello' ? JSON.stringify(formData) : null
+                });
+
+                const data = await response.json();
+                responseArea.textContent = `✨ 🐱 Success: ${JSON.stringify(data)}`;
+                responseArea.className = 'response success';
+                responseArea.style.display = 'block';
+            } catch (error) {
+                responseArea.textContent = `❌ 🐱 Error: ${error.message}`;
+                responseArea.className = 'response error';
+                responseArea.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
