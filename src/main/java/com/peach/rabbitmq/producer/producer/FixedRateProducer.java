@@ -20,7 +20,9 @@ public class FixedRateProducer {
     @Scheduled(fixedRate = 1000)
     public void sendMessage(){
         i++;
-        log.info("i is: {}", i);
-        rabbitTemplate.convertAndSend("peach.fixrate", "fixed rate: " + i);
+        if (i <= 20) {  // Stop after 50 messages
+            log.info("i is: {}", i);
+            rabbitTemplate.convertAndSend("peach.fixrate", "fixed rate: " + i);
+        }
     }
 }
