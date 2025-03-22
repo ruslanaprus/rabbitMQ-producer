@@ -74,4 +74,16 @@ public class MessageController {
                                   (furniture.getPrice() >= 100 ? "expensive" : "budget"));
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/furniture/topic")
+    public ResponseEntity<Map<String, String>> sendFurnitureTopic(@RequestBody Furniture furniture) {
+        furnitureProducer.sendJsonMessage(furniture);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Furniture topic message sent");
+        response.put("furnitureName", furniture.getName());
+        response.put("routingKey", furniture.getColour().toLowerCase() + "." +
+                                  furniture.getMaterial().toLowerCase() + "." +
+                                  (furniture.getPrice() >= 100 ? "expensive" : "budget"));
+        return ResponseEntity.ok(response);
+    }
 }

@@ -3,301 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RabbitMQ Message Sender</title>
+    <title>🐰 RabbitMQ Sender</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background: #f0f2f5;
         }
-        h1 {
-            color: #4CAF50;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 30px;
-            background-color: #f9f9f9;
+        .card {
+            background: white;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { 
+            color: #7c3aed;
+            text-align: center;
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin: 8px 0;
+            color: #374151;
         }
         input, select {
             width: 100%;
             padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
         button {
-            background-color: #4CAF50;
+            background: #7c3aed;
             color: white;
             border: none;
-            padding: 10px 15px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 4px;
+            padding: 10px 20px;
+            border-radius: 6px;
             cursor: pointer;
+            width: 100%;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #45a049;
+            background: #6d28d9;
         }
         .response {
-            margin-top: 10px;
+            margin-top: 12px;
             padding: 10px;
-            background-color: #e9f7ef;
-            border-left: 4px solid #4CAF50;
+            border-radius: 6px;
             display: none;
         }
-        .error {
-            background-color: #ffebee;
-            border-left: 4px solid #f44336;
-        }
+        .success { background: #ecfdf5; color: #065f46; }
+        .error { background: #fef2f2; color: #991b1b; }
     </style>
 </head>
 <body>
-    <h1>RabbitMQ Message Sender</h1>
+    <h1>🐰 RabbitMQ Message Sender</h1>
 
-    <div class="section">
-        <h2>Simple Hello Message</h2>
-        <form id="helloForm">
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <button type="submit">Send Hello Message</button>
-        </form>
-        <div id="helloResponse" class="response"></div>
-    </div>
+    <div class="card">
+        <h2>Send Message</h2>
+        <form id="messageForm">
+            <input type="hidden" id="messageType" name="messageType">
+            
+            <label for="messageCategory">Message Type:</label>
+            <select id="messageCategory" required>
+                <option value="">-- Select Type --</option>
+                <option value="hello">Hello Message</option>
+                <option value="picture">Picture</option>
+                <option value="employee">Employee</option>
+                <option value="furniture">Furniture</option>
+            </select>
 
-    <div class="section">
-        <h2>Picture Message</h2>
-        <form id="pictureForm">
-            <div>
-                <label for="pictureName">Name:</label>
-                <input type="text" id="pictureName" required>
-            </div>
-            <div>
-                <label for="pictureType">Type:</label>
-                <select id="pictureType" required>
-                    <option value="jpg">jpg</option>
-                    <option value="png">png</option>
-                    <option value="svg">svg</option>
-                </select>
-            </div>
-            <div>
-                <label for="pictureSource">Source:</label>
-                <select id="pictureSource" required>
-                    <option value="mobile">mobile</option>
-                    <option value="web">web</option>
-                </select>
-            </div>
-            <div>
-                <label for="pictureSize">Size (bytes):</label>
-                <input type="number" id="pictureSize" required min="1">
-            </div>
-            <button type="submit">Send Picture Message</button>
-        </form>
-        <div id="pictureResponse" class="response"></div>
-    </div>
+            <!-- Dynamic Fields -->
+            <div id="dynamicFields"></div>
 
-    <div class="section">
-        <h2>Employee Message</h2>
-        <form id="employeeForm">
-            <div>
-                <label for="employeeId">ID:</label>
-                <input type="text" id="employeeId" required>
-            </div>
-            <div>
-                <label for="employeeName">Name:</label>
-                <input type="text" id="employeeName" required>
-            </div>
-            <div>
-                <label for="employeeBirthday">Birthday:</label>
-                <input type="date" id="employeeBirthday" required>
-            </div>
-            <button type="submit">Send Employee Message</button>
+            <button type="submit">Send Message 🚀</button>
         </form>
-        <div id="employeeResponse" class="response"></div>
-    </div>
-
-    <div class="section">
-        <h2>Furniture Topic Message</h2>
-        <p>Uses a topic exchange with routing keys in the format: <code>colour.material.price-category</code></p>
-        <form id="furnitureTopicForm">
-            <div>
-                <label for="furnitureTopicName">Name:</label>
-                <input type="text" id="furnitureTopicName" required>
-            </div>
-            <div>
-                <label for="furnitureTopicColour">Colour:</label>
-                <select id="furnitureTopicColour" required>
-                    <option value="">-- Select Colour --</option>
-                    <option value="red">Red</option>
-                    <option value="blue">Blue</option>
-                    <option value="green">Green</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="white">White</option>
-                    <option value="black">Black</option>
-                    <option value="brown">Brown</option>
-                    <option value="silver">Silver</option>
-                </select>
-                <div class="hint">The color forms the first part of the routing key</div>
-            </div>
-            <div>
-                <label for="furnitureTopicMaterial">Material:</label>
-                <select id="furnitureTopicMaterial" required>
-                    <option value="">-- Select Material --</option>
-                    <option value="wood">Wood</option>
-                    <option value="plastic">Plastic</option>
-                    <option value="steel">Steel</option>
-                </select>
-                <div class="hint">These materials match our defined routing bindings</div>
-            </div>
-            <div>
-                <label for="furnitureTopicPrice">Price:</label>
-                <input type="number" id="furnitureTopicPrice" required min="0" placeholder="≥100 will route to 'expensive'">
-                <div class="hint">Price ≥ 100 will route to both material and expensive queues</div>
-            </div>
-            <button type="submit">Send via Topic Exchange</button>
-        </form>
-        <div id="furnitureTopicResponse" class="response"></div>
+        <div id="responseArea" class="response"></div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Base API URL
-            const apiUrl = '/api/messages';
+        const formConfigs = {
+            hello: [
+                { name: 'name', type: 'text', label: 'Name', required: true }
+            ],
+            picture: [
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'type', type: 'select', label: 'Type', options: ['jpg', 'png', 'svg'], required: true },
+                { name: 'source', type: 'select', label: 'Source', options: ['mobile', 'web'], required: true },
+                { name: 'size', type: 'number', label: 'Size (bytes)', required: true, min: 1 }
+            ],
+            employee: [
+                { name: 'id', type: 'text', label: 'ID', required: true },
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'birthday', type: 'date', label: 'Birthday', required: true }
+            ],
+            furniture: [
+                { name: 'name', type: 'text', label: 'Name', required: true },
+                { name: 'colour', type: 'select', label: 'Color', 
+                    options: ['red', 'blue', 'green', 'yellow', 'white', 'black', 'brown', 'silver'], required: true },
+                { name: 'material', type: 'select', label: 'Material', 
+                    options: ['wood', 'plastic', 'steel'], required: true },
+                { name: 'price', type: 'number', label: 'Price', required: true, min: 0 }
+            ]
+        };
 
-            // Hello form handler
-            document.getElementById('helloForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const name = document.getElementById('name').value;
+        const messageForm = document.getElementById('messageForm');
+        const categorySelect = document.getElementById('messageCategory');
+        const dynamicFields = document.getElementById('dynamicFields');
+        const responseArea = document.getElementById('responseArea');
 
-                fetch(`${apiUrl}/hello?name=${encodeURIComponent(name)}`, {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const responseElement = document.getElementById('helloResponse');
-                    responseElement.textContent = `Response: ${JSON.stringify(data)}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.remove('error');
-                })
-                .catch(error => {
-                    const responseElement = document.getElementById('helloResponse');
-                    responseElement.textContent = `Error: ${error.message}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.add('error');
-                });
+        categorySelect.addEventListener('change', function() {
+            dynamicFields.innerHTML = '';
+            const fields = formConfigs[this.value] || [];
+            fields.forEach(field => {
+                const wrapper = document.createElement('div');
+                if (field.type === 'select') {
+                    wrapper.innerHTML = `
+                        <label for="${field.name}">${field.label}:</label>
+                        <select id="${field.name}" name="${field.name}" ${field.required ? 'required' : ''}>
+                            ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>
+                    `;
+                } else {
+                    wrapper.innerHTML = `
+                        <label for="${field.name}">${field.label}:</label>
+                        <input type="${field.type}" id="${field.name}" name="${field.name}"
+                            ${field.required ? 'required' : ''} ${field.min ? `min="${field.min}"` : ''}>
+                    `;
+                }
+                dynamicFields.appendChild(wrapper);
+            });
+        });
+
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const type = categorySelect.value;
+            if (!type) return;
+
+            const formData = {};
+            formConfigs[type].forEach(field => {
+                const element = document.getElementById(field.name);
+                formData[field.name] = element.type === 'number' ? Number(element.value) : element.value;
             });
 
-            // Picture form handler
-            document.getElementById('pictureForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+            try {
+                let url = '/api/messages/';
+                switch(type) {
+                    case 'hello': url += `hello?name=${encodeURIComponent(formData.name)}`; break;
+                    case 'picture': url += 'picture'; break;
+                    case 'employee': url += 'employee'; break;
+                    case 'furniture': url += 'furniture/topic'; break;
+                }
 
-                const picture = {
-                    name: document.getElementById('pictureName').value,
-                    type: document.getElementById('pictureType').value,
-                    source: document.getElementById('pictureSource').value,
-                    size: parseInt(document.getElementById('pictureSize').value)
-                };
-
-                fetch(`${apiUrl}/picture`, {
+                const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(picture)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const responseElement = document.getElementById('pictureResponse');
-                    responseElement.textContent = `Response: ${JSON.stringify(data)}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.remove('error');
-                })
-                .catch(error => {
-                    const responseElement = document.getElementById('pictureResponse');
-                    responseElement.textContent = `Error: ${error.message}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.add('error');
+                    headers: type !== 'hello' ? {'Content-Type': 'application/json'} : {},
+                    body: type !== 'hello' ? JSON.stringify(formData) : null
                 });
-            });
 
-            // Employee form handler
-            document.getElementById('employeeForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const employee = {
-                    id: document.getElementById('employeeId').value,
-                    name: document.getElementById('employeeName').value,
-                    birthday: document.getElementById('employeeBirthday').value
-                };
-
-                fetch(`${apiUrl}/employee`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(employee)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const responseElement = document.getElementById('employeeResponse');
-                    responseElement.textContent = `Response: ${JSON.stringify(data)}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.remove('error');
-                })
-                .catch(error => {
-                    const responseElement = document.getElementById('employeeResponse');
-                    responseElement.textContent = `Error: ${error.message}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.add('error');
-                });
-            });
-
-            // Furniture topic form handler
-            document.getElementById('furnitureTopicForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const furnitureTopic = {
-                    name: document.getElementById('furnitureTopicName').value,
-                    colour: document.getElementById('furnitureTopicColour').value,
-                    material: document.getElementById('furnitureTopicMaterial').value,
-                    price: parseInt(document.getElementById('furnitureTopicPrice').value)
-                };
-
-                fetch(`${apiUrl}/furniture/topic`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(furnitureTopic)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const responseElement = document.getElementById('furnitureTopicResponse');
-                    responseElement.textContent = `Response: ${JSON.stringify(data)}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.remove('error');
-                })
-                .catch(error => {
-                    const responseElement = document.getElementById('furnitureTopicResponse');
-                    responseElement.textContent = `Error: ${error.message}`;
-                    responseElement.style.display = 'block';
-                    responseElement.classList.add('error');
-                });
-            });
+                const data = await response.json();
+                responseArea.textContent = `✨ Success: ${JSON.stringify(data)}`;
+                responseArea.className = 'response success';
+                responseArea.style.display = 'block';
+            } catch (error) {
+                responseArea.textContent = `❌ Error: ${error.message}`;
+                responseArea.className = 'response error';
+                responseArea.style.display = 'block';
+            }
         });
     </script>
 </body>
