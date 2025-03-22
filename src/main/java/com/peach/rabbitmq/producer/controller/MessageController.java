@@ -4,7 +4,6 @@ import com.peach.rabbitmq.producer.entity.Employee;
 import com.peach.rabbitmq.producer.entity.Furniture;
 import com.peach.rabbitmq.producer.entity.Picture;
 import com.peach.rabbitmq.producer.producer.EmployeeJsonProducer;
-import com.peach.rabbitmq.producer.producer.FurnitureProducer;
 import com.peach.rabbitmq.producer.producer.FurnitureTopicProducer;
 import com.peach.rabbitmq.producer.producer.PictureProducer;
 import com.peach.rabbitmq.producer.producer.RabbitProducer;
@@ -23,21 +22,18 @@ public class MessageController {
     private final RabbitProducer rabbitProducer;
     private final PictureProducer pictureProducer;
     private final EmployeeJsonProducer employeeJsonProducer;
-    private final FurnitureProducer furnitureProducer;
-    private final FurnitureTopicProducer furnitureTopicProducer;
+    private final FurnitureTopicProducer furnitureProducer;
 
     public MessageController(
             RabbitProducer rabbitProducer,
             PictureProducer pictureProducer,
             EmployeeJsonProducer employeeJsonProducer,
-            FurnitureProducer furnitureProducer,
-            FurnitureTopicProducer furnitureTopicProducer
+            FurnitureTopicProducer furnitureProducer
     ) {
         this.rabbitProducer = rabbitProducer;
         this.pictureProducer = pictureProducer;
         this.employeeJsonProducer = employeeJsonProducer;
         this.furnitureProducer = furnitureProducer;
-        this.furnitureTopicProducer = furnitureTopicProducer;
     }
 
     @PostMapping("/hello")
@@ -45,7 +41,7 @@ public class MessageController {
         rabbitProducer.sendHello(name);
         Map<String, String> response = new HashMap<>();
         response.put("status", "Message sent");
-        response.put("message", "Hello " + name);
+        response.put("message", "Helloo " + name);
         return ResponseEntity.ok(response);
     }
 
@@ -69,21 +65,12 @@ public class MessageController {
 
     @PostMapping("/furniture")
     public ResponseEntity<Map<String, String>> sendFurniture(@RequestBody Furniture furniture) {
-        furnitureProducer.sendMessage(furniture);
+        furnitureProducer.sendJsonMessage(furniture);
         Map<String, String> response = new HashMap<>();
         response.put("status", "Furniture message sent");
         response.put("furnitureName", furniture.getName());
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/furniture/topic")
-    public ResponseEntity<Map<String, String>> sendFurnitureTopic(@RequestBody Furniture furniture) {
-        furnitureTopicProducer.sendJsonMessage(furniture);
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "Furniture topic message sent");
-        response.put("furnitureName", furniture.getName());
-        response.put("routingKey", furniture.getColour().toLowerCase() + "." + 
-                                  furniture.getMaterial().toLowerCase() + "." + 
+        response.put("routingKey", furniture.getColour().toLowerCase() + "." +
+                                  furniture.getMaterial().toLowerCase() + "." +
                                   (furniture.getPrice() >= 100 ? "expensive" : "budget"));
         return ResponseEntity.ok(response);
     }

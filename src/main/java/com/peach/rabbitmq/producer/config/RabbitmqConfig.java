@@ -67,11 +67,6 @@ public class RabbitmqConfig {
         return new TopicExchange("x.furniture.topic");
     }
     
-    @Bean
-    public DirectExchange promotionExchange() {
-        return new DirectExchange("x.promotion");
-    }
-    
     // Define queues
     @Bean
     public Queue pictureImageQueue() {
@@ -107,11 +102,6 @@ public class RabbitmqConfig {
     @Bean
     public Queue furnitureExpensiveQueue() {
         return new Queue("q.furniture.expensive");
-    }
-    
-    @Bean
-    public Queue furniturePromotionQueue() {
-        return new Queue("q.furniture.promotion");
     }
     
     // Simple queues for other producers
@@ -193,12 +183,5 @@ public class RabbitmqConfig {
         return BindingBuilder.bind(furnitureExpensiveQueue)
                 .to(furnitureTopicExchange)
                 .with("#.expensive");
-    }
-    
-    @Bean
-    public Binding furniturePromotionBinding(Queue furniturePromotionQueue, DirectExchange promotionExchange) {
-        return BindingBuilder.bind(furniturePromotionQueue)
-                .to(promotionExchange)
-                .with("");
     }
 }
