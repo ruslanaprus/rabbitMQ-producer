@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐰 RabbitMQ Sender</title>
+    <title>🐰 🐱 RabbitMQ Sender</title>
     <style>
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -59,26 +59,26 @@
     </style>
 </head>
 <body>
-    <h1>🐰 RabbitMQ Message Sender</h1>
+    <h1>🐰 🐱 RabbitMQ Message Sender</h1>
 
     <div class="card">
-        <h2>Send Message</h2>
+        <h2>Send Message 🐱</h2>
         <form id="messageForm">
             <input type="hidden" id="messageType" name="messageType">
             
-            <label for="messageCategory">Message Type:</label>
+            <label for="messageCategory">Message Type 🐱:</label>
             <select id="messageCategory" required>
-                <option value="">-- Select Type --</option>
-                <option value="hello">Hello Message</option>
-                <option value="picture">Picture</option>
-                <option value="employee">Employee</option>
-                <option value="furniture">Furniture</option>
+                <option value="">-- Select Type 🐱 --</option>
+                <option value="hello">Hello Message 🐱</option>
+                <option value="picture">Picture 🐱</option>
+                <option value="employee">Employee 🐱</option>
+                <option value="furniture">Furniture 🐱</option>
             </select>
 
             <!-- Dynamic Fields -->
             <div id="dynamicFields"></div>
 
-            <button type="submit">Send Message 🚀</button>
+            <button type="submit">Send Message 🚀 🐱</button>
         </form>
         <div id="responseArea" class="response"></div>
     </div>
@@ -114,21 +114,27 @@
         const dynamicFields = document.getElementById('dynamicFields');
         const responseArea = document.getElementById('responseArea');
 
+        // Clear response area when message type changes
         categorySelect.addEventListener('change', function() {
+            // Clear the response area
+            responseArea.style.display = 'none';
+            responseArea.textContent = '';
+            responseArea.className = 'response';
+
             dynamicFields.innerHTML = '';
             const fields = formConfigs[this.value] || [];
             fields.forEach(field => {
                 const wrapper = document.createElement('div');
                 if (field.type === 'select') {
                     wrapper.innerHTML = `
-                        <label for="${field.name}">${field.label}:</label>
+                        <label for="${field.name}">${field.label} 🐱:</label>
                         <select id="${field.name}" name="${field.name}" ${field.required ? 'required' : ''}>
-                            ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                            ${field.options.map(opt => `<option value="${opt}">${opt} 🐱</option>`).join('')}
                         </select>
                     `;
                 } else {
                     wrapper.innerHTML = `
-                        <label for="${field.name}">${field.label}:</label>
+                        <label for="${field.name}">${field.label} 🐱:</label>
                         <input type="${field.type}" id="${field.name}" name="${field.name}"
                             ${field.required ? 'required' : ''} ${field.min ? `min="${field.min}"` : ''}>
                     `;
@@ -164,11 +170,11 @@
                 });
 
                 const data = await response.json();
-                responseArea.textContent = `✨ Success: ${JSON.stringify(data)}`;
+                responseArea.textContent = `✨ 🐱 Success: ${JSON.stringify(data)}`;
                 responseArea.className = 'response success';
                 responseArea.style.display = 'block';
             } catch (error) {
-                responseArea.textContent = `❌ Error: ${error.message}`;
+                responseArea.textContent = `❌ 🐱 Error: ${error.message}`;
                 responseArea.className = 'response error';
                 responseArea.style.display = 'block';
             }
